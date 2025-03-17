@@ -18,10 +18,12 @@ Installation
 - Clone the repository
  
 - Install dependencies
- npm i
+
+ (npm i)
 
 - Run Angular App
- ng serve -o
+
+ (ng serve -o)
 
 
  Usage
@@ -102,6 +104,4 @@ Installation
     ]
   }
   
-  Component Usage
- - <app-dynamic-form></app-dynamic-form>
 
