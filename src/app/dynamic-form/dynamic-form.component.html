@@ -1,0 +1,70 @@
+<form *ngIf="dynamicForm" [formGroup]="dynamicForm" (ngSubmit)="submitForm()" class="container mt-4">
+    <div *ngFor="let field of formConfig.fields" class="mb-3">
+      <ng-container [ngSwitch]="field.type">
+  
+        <!-- Text -->
+        <div *ngSwitchCase="'text'" class="form-group">
+          <label class="form-label">{{ field.label }}</label>
+          <input type="text" class="form-control" [class.is-invalid]="isInvalid(field.name)" [formControlName]="field.name" />
+          <div *ngIf="isInvalid(field.name)" class="invalid-feedback">{{ getErrorMessage(field.name) }}</div>
+        </div>
+       <!-- Email -->
+        <div *ngSwitchCase="'email'" class="form-group">
+          <label class="form-label">{{ field.label }}</label>
+          <input type="email" class="form-control" [class.is-invalid]="isInvalid(field.name)" [formControlName]="field.name" />
+          <div *ngIf="isInvalid(field.name)" class="invalid-feedback">{{ getErrorMessage(field.name) }}</div>
+        </div>
+       <!-- PassWord -->
+        <div *ngSwitchCase="'password'" class="form-group">
+          <label class="form-label">{{ field.label }}</label>
+          <input type="password" class="form-control" [class.is-invalid]="isInvalid(field.name)" [formControlName]="field.name" />
+          <div *ngIf="isInvalid(field.name)" class="invalid-feedback">{{ getErrorMessage(field.name) }}</div>
+        </div>
+  
+        <!-- Select Dropdown -->
+        <div *ngSwitchCase="'select'" class="form-group">
+          <label class="form-label">{{ field.label }}</label>
+          <select class="form-control" [class.is-invalid]="isInvalid(field.name)" [formControlName]="field.name">
+            <option value="">Select {{ field.label }}</option>
+            <option *ngFor="let option of field.options" [value]="option.value">{{ option.label }}</option>
+          </select>
+          <div *ngIf="isInvalid(field.name)" class="invalid-feedback">{{ getErrorMessage(field.name) }}</div>
+        </div>
+  
+        <!-- Checkbox -->
+        <div *ngSwitchCase="'checkbox'" class="form-group form-check">
+          <input type="checkbox" class="form-check-input" [formControlName]="field.name" />
+          <label class="form-check-label">{{ field.label }}</label>
+        </div>
+  
+        <!-- Group Handling -->
+        <div *ngSwitchCase="'group'" [formGroupName]="field.name" class="border p-3 rounded">
+          <h3>{{ field.label }}</h3>
+          <div *ngFor="let subField of field.fields">
+            <label class="form-label">{{ subField.label }}</label>
+            <input type="text" class="form-control" [class.is-invalid]="isInvalid(field.name + '.' + subField.name)" [formControlName]="subField.name" />
+            <div *ngIf="isInvalid(field.name + '.' + subField.name)" class="invalid-feedback">{{ getErrorMessage(field.name + '.' + subField.name) }}</div>
+          </div>
+        </div>
+  
+        <!-- Array -->
+        <div *ngSwitchCase="'array'" class="form-group">
+          <label class="form-label">{{ field.label }}</label>
+          <div formArrayName="{{ field.name }}">
+            <div *ngFor="let control of getFormArray(field.name).controls; let i = index" class="input-group mb-2">
+              <input type="text" class="form-control" [formControlName]="i" />
+              <button type="button" class="btn btn-danger" (click)="removeArrayItem(field.name, i)">Remove</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary mt-2" (click)="addArrayItem(field.name)">Add {{ field.label }}</button>
+        </div>
+  
+      </ng-container>
+    </div>
+  
+    <!-- Submit Button -->
+    <div class="d-flex justify-content-center mt-4 mb-5">
+      <button type="submit" class="btn btn-success w-25" [disabled]="dynamicForm.invalid">Submit</button>
+    </div>
+  </form>
+
